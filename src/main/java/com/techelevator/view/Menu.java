@@ -24,6 +24,15 @@ public class Menu {
 		return choice;
 	}
 
+	public Object getChoiceFromPurchaseOptions(Object[] options, double amount) {
+		Object choice = null;
+		while (choice == null) {
+			displayPurchaseMenuOptions(options, amount);
+			choice = getChoiceFromUserInput(options);
+		}
+		return choice;
+	}
+
 	private Object getChoiceFromUserInput(Object[] options) {
 		Object choice = null;
 		String userInput = in.nextLine();
@@ -47,6 +56,17 @@ public class Menu {
 			int optionNum = i + 1;
 			out.println(optionNum + ") " + options[i]);
 		}
+		out.print(System.lineSeparator() + "Please choose an option >>> ");
+		out.flush();
+	}
+
+	private void displayPurchaseMenuOptions(Object[] options, double amount) {
+		out.println();
+		for (int i = 0; i < options.length; i++) {
+			int optionNum = i + 1;
+			out.println(optionNum + ") " + options[i]);
+		}
+		out.println("\nCurrent Money Provided: $" + amount);
 		out.print(System.lineSeparator() + "Please choose an option >>> ");
 		out.flush();
 	}
