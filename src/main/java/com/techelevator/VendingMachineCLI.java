@@ -1,7 +1,12 @@
 package com.techelevator;
-import com.techelevator.view.Menu;
+import com.techelevator.view.*;
 
+import javax.sound.midi.Soundbank;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.Map;
 import java.util.HashMap;
@@ -20,6 +25,22 @@ public class VendingMachineCLI {
 	- learned that menu options are picked by number ONLY
 	- added final strings for PURCHASE menu
 	- added skeleton method for navigating PURCHASE menu
+
+
+	----------- 6.14.22 additions -----------
+	- edited finishTransaction to account for not having enough funds
+	- created AuditFile class to append to a log file
+	- edited some code in runPurchase() to account for log file messages
+	- made runPurchase() return to main menu after finishing transaction
+	- moved gatherItems() to its own class, made it static
+	- moved displayItems() to its own class, made it static
+	- moved selectProduct() to its own class, made it static
+	- moved finishTransaction() to its own class, made it static
+	- made DisplayItems, SelectProduct have parameter of Map<String,String> items.
+	- moved Map<String,String> items to beginning of code to be referenced to rest of code.
+	- accounted for multiple items in one purchase.
+	- added ability to show total price of purchase.
+
 	 */
 
 	private static final String MAIN_MENU_OPTION_DISPLAY_ITEMS = "Display Vending Machine Items";
@@ -32,72 +53,45 @@ public class VendingMachineCLI {
 	private static final String PURCHASE_MENU_FINISH_TRANSACTION = "Finish Transaction";
 	private static final String[] PURCHASE_MENU_OPTIONS = { PURCHASE_MENU_FEED_MONEY, PURCHASE_MENU_SELECT_PRODUCT, PURCHASE_MENU_FINISH_TRANSACTION };
 
-	private static final int SLOT_LOCATION = 0;
-	private static final int PRODUCT_NAME = 1;
-	private static final int PRICE = 2;
-	private static final int TYPE = 3;
-
-	private static final double QUARTER = 0.25;
-	private static final double DIME = 0.10;
-	private static final double NICKEL = 0.05;
-	private static final double PENNY = 0.01;
-
-
-
-	private Menu menu;
+	private static Menu menu;
 
 	public VendingMachineCLI(Menu menu) {
 		this.menu = menu;
 	}
 
 	public void run() {
+
+		Map<String, String> items = GatherItems.gatherItems();
+		double amount = 0.00;
+		double total = 0.00;
+
 		while (true) {
 			String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 
 			if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS)) {
 				// display vending machine items
-				displayItems();
+				DisplayItems.displayItems(items);
 
 			} else if (choice.equals(MAIN_MENU_OPTION_PURCHASE)) {
 				// do purchase
 				VendingMachineCLI cli = new VendingMachineCLI(menu);
-				cli.runPurchase();
+				cli.runPurchase(items, amount, total);
 			} else if(choice.equalsIgnoreCase(MAIN_MENU_OPTION_EXIT)){
 				System.exit(0);
 			}
 		}
 	}
 
-	// STEP 3: reads input file and returns map of vending machine items
-	public Map<String,String> gatherItems(){
-		File text = new File("C:\\Users\\hanni\\Desktop\\Capstones\\capstone-1\\vendingmachine.csv");
-		Map<String,String> items = new HashMap<>();
-		int inventory = 5;
-
-		try(Scanner input = new Scanner(text)){
-
-			// read file to gather items.
-			while(input.hasNextLine()){
-				String line = input.nextLine();
-				String[] lineSplit = line.split("[|]");
-
-				items.put(lineSplit[SLOT_LOCATION], lineSplit[PRODUCT_NAME] + "|" + lineSplit[PRICE] + "|" + lineSplit[TYPE] + "|" + inventory);
-			}
-		}
-		catch(FileNotFoundException e){
-
-		}
-		return items;
-	}
 
 	// STEP 6: menu for purchasing a product
-	public void runPurchase() {
+	public static void runPurchase(Map<String, String> items, double amount, double total) {
 
-		double amount = 0.00;
-		double total = 0.00;
+
+		Date date = new Date(); // This object contains the current date value
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss aa");
 
 		while (true) {
-			String choice = (String) menu.getChoiceFromPurchaseOptions(PURCHASE_MENU_OPTIONS, amount);
+			String choice = (String) menu.getChoiceFromPurchaseOptions(PURCHASE_MENU_OPTIONS, amount, total);
 			if (choice.equalsIgnoreCase(PURCHASE_MENU_FEED_MONEY)) {
 				//STEP 7: feed
 				boolean run = true;
@@ -106,143 +100,31 @@ public class VendingMachineCLI {
 
 				double fedMoney = Double.parseDouble(userInput.nextLine());
 				amount += fedMoney;
+
+				AuditLog.log(formatter.format(date) + " FEED MONEY: $" + fedMoney + " $" + amount + "\n");
+
 			} else if (choice.equalsIgnoreCase(PURCHASE_MENU_SELECT_PRODUCT)) {
 				// do purchase
-				total = selectProduct();
+				total = SelectProduct.selectProduct(items, amount, total);
+
 
 			} else if(choice.equalsIgnoreCase(PURCHASE_MENU_FINISH_TRANSACTION)){
-				amount = finishTransaction(amount, total);
+				VendingMachineCLI cli = new VendingMachineCLI(menu);
+				double temp = FinishTransaction.finishTransaction(amount, total);
+
+				if(temp == -1){ cli.runPurchase(items, amount, total);}
+				else{
+					amount = temp;
+					total = 0;
+					cli.run();
+				}
 
 			}
 		}
 	}
-
-	// STEP 5: displays vending machine items. will show if inventory is sold out.
-	public void displayItems(){
-		Map<String, String> items = gatherItems();
-
-		// print each item.
-		for(Map.Entry<String, String> key : items.entrySet()){
-
-			String[] values = key.getValue().split("[|]");
-			int inventory = Integer.parseInt(values[TYPE]);
-
-			if(inventory == 0){
-				System.out.println(key.getKey() + " - " + values[PRODUCT_NAME - 1] + " $" + values[PRICE - 1] + " SOLD OUT");
-			}
-			else System.out.println(key.getKey() + " - " + values[PRODUCT_NAME - 1] + " $" + values[PRICE - 1] + " x" + inventory);
-		}
-	}
-
-	// STEP 7.2: selecting the product with user input
-	public double selectProduct(){
-		Map<String, String> items = gatherItems();
-		double total = 0;
-
-		displayItems();
-
-		System.out.println("Select Item >>> ");
-
-		Scanner selection = new Scanner(System.in);
-		String userInput = selection.nextLine();
-
-		if(items.containsKey(userInput)){
-
-			String wantedItem = items.get(userInput);
-
-			String[] values = wantedItem.split("[|]");
-			int inventory = Integer.parseInt(values[TYPE]);
-
-
-			/*
-			for(int i = 0; i < values.length; i++){
-				System.out.println(values[i]);
-			}
-			System.out.println("\n" + inventory);
-			*/
-
-
-			if(inventory == 0){
-				System.out.println("ITEM IS NOW SOLD OUT");
-				runPurchase();
-			} else{
-
-				double price = Double.parseDouble(values[PRICE - 1]);
-				String type = values[TYPE-1];
-
-				if(type.equalsIgnoreCase("Chip")){
-					System.out.println("Crunch Crunch, Yum!");
-				}
-				else if(type.equalsIgnoreCase("Candy")){
-					System.out.println("Munch Munch, Yum!");
-				}
-				else if(type.equalsIgnoreCase("Drink")){
-					System.out.println("Glug Glug, Yum!");
-				}
-				else if(type.equalsIgnoreCase("Gum")){
-					System.out.println("Chew Chew, Yum!");
-				}
-
-				total += price;
-			}
-		} else{
-			System.out.printf("PRODUCT DOES NOT EXIST");
-			runPurchase();
-		}
-
-		return total;
-	}
-
-public double finishTransaction(double amount, double total) {
-		double change = 0;
-		change = amount - total;
-
-		if(change < 0){
-			System.out.print("You can't do that :/");
-		}
-
-		double temp = 0;
-		temp = change;
-		double remaining;
-
-		int quarters = (int) (temp / QUARTER);
-		remaining = temp % QUARTER;
-
-		temp = remaining;
-
-		int dimes = (int) (temp / DIME);
-	    remaining = temp % DIME;
-
-	    temp = remaining;
-
-		int nickels = (int) (temp / NICKEL);
-		remaining = temp % NICKEL;
-
-		temp = remaining;
-
-		int pennies = (int) (temp / PENNY);
-
-	    System.out.println("Dispensing " + quarters + " quarters, " + dimes + " dimes, " + nickels + " nickels, " + pennies + " pennies.");
-		return 0;
-		//NumberFormat remains = NumberFormat.getCurrencyInstance();
-		//return Double.parseDouble(remains.format(remaining));
-
-
-
-
-
-		/*
-		7.50.......... 30 quarters ; 75 dimes ; 150 nickels
-		3.65.......... 14 quarters + 1 dime + 1 nickel ; 36 dimes + 1 nickel ; 73 nickels
-		*/
-
-
-}
-
-
-
 
 	public static void main(String[] args) {
+
 		Menu menu = new Menu(System.in, System.out);
 		VendingMachineCLI cli = new VendingMachineCLI(menu);
 		cli.run();
