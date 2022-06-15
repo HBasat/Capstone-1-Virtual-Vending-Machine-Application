@@ -66,7 +66,7 @@ public class Menu {
 			int optionNum = i + 1;
 			out.println(optionNum + ") " + options[i]);
 		}
-		out.println("\nCurrent Total: $ " + total);
+		out.println("\nCurrent Total: $ " + String.format("%.2f",total));
 		out.println("Current Money Provided: $ " + String.format("%.2f",amount));
 		out.print(System.lineSeparator() + "Please choose an option >>> ");
 		out.flush();

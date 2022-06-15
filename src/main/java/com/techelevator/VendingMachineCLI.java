@@ -59,9 +59,8 @@ public class VendingMachineCLI {
 		this.menu = menu;
 	}
 
-	public void run() {
+	public void run(Map<String, String> items) {
 
-		Map<String, String> items = GatherItems.gatherItems();
 		double amount = 0.00;
 		double total = 0.00;
 
@@ -101,7 +100,7 @@ public class VendingMachineCLI {
 				double fedMoney = Double.parseDouble(userInput.nextLine());
 				amount += fedMoney;
 
-				AuditLog.log(formatter.format(date) + " FEED MONEY: $" + fedMoney + " $" + amount + "\n");
+				AuditLog.log(formatter.format(date) + " FEED MONEY: $" + fedMoney + " $" + String.format("%.2f",amount) + "\n");
 
 			} else if (choice.equalsIgnoreCase(PURCHASE_MENU_SELECT_PRODUCT)) {
 				// do purchase
@@ -116,17 +115,18 @@ public class VendingMachineCLI {
 				else{
 					amount = temp;
 					total = 0;
-					cli.run();
+					cli.run(items);
 				}
-
 			}
 		}
 	}
 
 	public static void main(String[] args) {
 
+		Map<String, String> items = GatherItems.gatherItems();
+
 		Menu menu = new Menu(System.in, System.out);
 		VendingMachineCLI cli = new VendingMachineCLI(menu);
-		cli.run();
+		cli.run(items);
 	}
 }

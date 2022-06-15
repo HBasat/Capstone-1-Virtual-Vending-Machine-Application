@@ -3,8 +3,10 @@ package com.techelevator.view;
 import com.techelevator.VendingMachineCLI;
 
 import javax.sound.midi.Soundbank;
+import java.util.Date;
 import java.util.Map;
 import java.util.Scanner;
+import java.text.SimpleDateFormat;
 
 public class SelectProduct {
 
@@ -13,6 +15,9 @@ public class SelectProduct {
 
     // STEP 7.2: selecting the product with user input
     public static double selectProduct(Map<String, String> items, double amount, double total){
+
+        Date date = new Date(); // This object contains the current date value
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss aa");
 
         DisplayItems.displayItems(items);
 
@@ -61,9 +66,13 @@ public class SelectProduct {
                 total += price;
                 inventory -= 1;
 
+                double temp = amount;
+
                 //System.out.println(values[0] + "|" + values[1] + "|" + values[2] + "|" + inventory);
                 items.replace(userInput, values[0] + "|" + values[1] + "|" + values[2] + "|" + inventory--);
-                System.out.printf(items.get(userInput));
+                //System.out.printf(items.get(userInput));
+
+                AuditLog.log("\n" + formatter.format(date) + " " +  values[0] + " " + userInput + " " + String.format("%.2f",amount) + " " + String.format("%.2f",amount-total));
 
             }
         } else{
