@@ -62,7 +62,7 @@ public class SelectProduct {
                     soldInventory++;
 
                     soldItems.replace(userInput, soldValues[0] + "|" + soldValues[1] + "|" + soldValues[2] + "|" + soldInventory);
-                    System.out.println(userInput + soldValues[0] + "|" + soldValues[1] + "|" + soldValues[2] + "|" + soldInventory);
+                    //System.out.println(userInput + soldValues[0] + "|" + soldValues[1] + "|" + soldValues[2] + "|" + soldInventory);
                 }
 
                 // Total is added up and inventory is decreased by 1.
@@ -73,7 +73,7 @@ public class SelectProduct {
 
                 // Changes in inventory are done through the following line. The audit log records the choice of purchase.
                 items.replace(userInput, values[0] + "|" + values[1] + "|" + values[2] + "|" + inventory--);
-                AuditLog.log("\n\n" + formatter.format(date) + " " +  values[0] + " " + userInput + " " + String.format("%.2f",amount) + " " + String.format("%.2f",amount-total));
+                AuditLog.log("\n" + formatter.format(date) + " " +  values[0] + " " + userInput + " " + String.format("%.2f",amount) + " " + String.format("%.2f",amount-total));
 
             }
         }

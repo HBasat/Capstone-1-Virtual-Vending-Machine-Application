@@ -4,17 +4,17 @@ import org.junit.Assert;
 import org.junit.Test;
 import java.util.Map;
 
-public class GatherItemsTest {
+public class GatherSoldTest {
 
     @Test
     public void Gather_Items(){
 
-        Map<String,String> tests = GatherItems.gatherItems();
+        Map<String,String> tests = GatherSold.gatherSold();
 
         Assert.assertTrue(tests.containsKey("A1"));
-        Assert.assertTrue(tests.containsValue("Potato Crisps|3.05|Chip|5"));
+        Assert.assertTrue(tests.containsValue("Potato Crisps|3.05|Chip|0"));
         Assert.assertTrue(tests.containsKey("D4"));
-        Assert.assertTrue(tests.containsValue("Triplemint|0.75|Gum|5"));
+        Assert.assertTrue(tests.containsValue("Triplemint|0.75|Gum|0"));
     }
 
     @Test

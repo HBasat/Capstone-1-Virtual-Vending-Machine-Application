@@ -15,7 +15,7 @@ public class AuditLog {
             try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFile, true))) {
                 writer.append(message);
             } catch (Exception e) {
-                System.out.println("File cannot be opened for audit logging. Please check filepath.");
+                System.out.println("log.txt cannot be opened for audit logging. Please check filepath.");
             }
         }
     }

@@ -35,7 +35,7 @@ public class GatherSold {
         }
         // If file cannot be found, output to user.
         catch(FileNotFoundException e){
-            System.out.println("File cannot be opened for reading. Please check filepath.");
+            System.out.println("vendingmachine.csv cannot be opened for reading. Please check filepath.");
         }
         return items;
     }

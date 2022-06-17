@@ -8,37 +8,11 @@ import java.util.Map;
 
 public class VendingMachineCLI {
 
-	/*
-	----------- 6.8.22 additions -----------
-	- added final string "EXIT" ; updated main menu options
-	- added if/else statement to exit program upon choosing EXIT
-	- changed choice.equals() >> choice.equalsIgnoreCase()
-
-	- learned that menu options are picked by number ONLY
-	- added final strings for PURCHASE menu
-	- added skeleton method for navigating PURCHASE menu
-
-
-	----------- 6.14.22 additions -----------
-	- edited finishTransaction to account for not having enough funds
-	- created AuditFile class to append to a log file
-	- edited some code in runPurchase() to account for log file messages
-	- made runPurchase() return to main menu after finishing transaction
-	- moved gatherItems() to its own class, made it static
-	- moved displayItems() to its own class, made it static
-	- moved selectProduct() to its own class, made it static
-	- moved finishTransaction() to its own class, made it static
-	- made DisplayItems, SelectProduct have parameter of Map<String,String> items.
-	- moved Map<String,String> items to beginning of code to be referenced to rest of code.
-	- accounted for multiple items in one purchase.
-	- added ability to show total price of purchase.
-
-	 */
-
 	private static final String MAIN_MENU_OPTION_DISPLAY_ITEMS = "Display Vending Machine Items";
 	private static final String MAIN_MENU_OPTION_PURCHASE = "Purchase";
 	private static final String MAIN_MENU_OPTION_EXIT = "Exit";
-	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_DISPLAY_ITEMS, MAIN_MENU_OPTION_PURCHASE, MAIN_MENU_OPTION_EXIT };
+	private static final String MAIN_MENU_SALES_REPORT	 = "";
+	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_DISPLAY_ITEMS, MAIN_MENU_OPTION_PURCHASE, MAIN_MENU_OPTION_EXIT, MAIN_MENU_SALES_REPORT};
 
 	private static final String PURCHASE_MENU_FEED_MONEY = "Feed Money";
 	private static final String PURCHASE_MENU_SELECT_PRODUCT = "Select Product";
@@ -75,8 +49,9 @@ public class VendingMachineCLI {
 				System.exit(0);
 
 				// Generates a sales report.
-			} else if(choice.matches("4")){
+			} else if(choice.matches(MAIN_MENU_SALES_REPORT)){
 				RecordReport.openReport(soldItems);
+				DisplaySalesReport.displayItems(soldItems);
 			}
 		}
 	}
@@ -100,7 +75,7 @@ public class VendingMachineCLI {
 				amount += fedMoney;
 
 				// Money fed into machine is written into the audit log.
-				AuditLog.log(formatter.format(date) + " FEED MONEY: $" + fedMoney + " $" + String.format("%.2f",amount) + "\n");
+				AuditLog.log(formatter.format(date) + " FEED MONEY: $" + fedMoney + " $" + String.format("%.2f",amount));
 
 			} else if (choice.equalsIgnoreCase(PURCHASE_MENU_SELECT_PRODUCT)) {
 				// Select the product of choice.
@@ -133,3 +108,37 @@ public class VendingMachineCLI {
 		cli.run(items, soldItems);
 	}
 }
+
+	/*
+	----------- 6.8.22 additions -----------
+	- added final string "EXIT" ; updated main menu options
+	- added if/else statement to exit program upon choosing EXIT
+	- changed choice.equals() >> choice.equalsIgnoreCase()
+
+	- learned that menu options are picked by number ONLY
+	- added final strings for PURCHASE menu
+	- added skeleton method for navigating PURCHASE menu
+
+
+	----------- 6.14.22 additions -----------
+	- edited finishTransaction to account for not having enough funds
+	- created AuditFile class to append to a log file
+	- edited some code in runPurchase() to account for log file messages
+	- made runPurchase() return to main menu after finishing transaction
+	- moved gatherItems() to its own class, made it static
+	- moved displayItems() to its own class, made it static
+	- moved selectProduct() to its own class, made it static
+	- moved finishTransaction() to its own class, made it static
+	- made DisplayItems, SelectProduct have parameter of Map<String,String> items.
+	- moved Map<String,String> items to beginning of code to be referenced to rest of code.
+	- accounted for multiple items in one purchase.
+	- added ability to show total price of purchase.
+
+	----------- 6.17.22 additions -----------
+	- added a sales report option. it is secret!
+	- new "record report" class and "display sales report" class.
+	- added lines in SelectProduct and VendingMachineCLI for sales report to function correctly.
+	- updated menu a so that option 4 does not show from the menu.
+	- added a lot of comments to help parse through the code.
+	- added a bunch of unit tests.
+	 */

@@ -12,13 +12,14 @@ public class RecordReport {
     private static final int PRODUCT_NAME = 0;
     private static final int INVENTORY = 3;
 
+    // Opens a file to record number of sales.
     public static void openReport(Map<String, String> items){
 
         Date date = new Date(); // This object contains the current date value
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss aa");
 
         // Creates a file object to be written into.
-        File logFile = new File("C:\\Users\\hanni\\Desktop\\Capstones\\capstone-1\\salesreport.txt");
+        File logFile = new File("capstone-1\\salesreport.txt");
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFile, true))) {
 
@@ -30,7 +31,7 @@ public class RecordReport {
             }
 
         } catch (FileNotFoundException e) {
-            System.out.println("File cannot be opened for logging. Please check filepath.");
+            System.out.println("salesreport.txt cannot be opened for logging. Please check filepath.");
         }
 
     }

@@ -1,13 +1,14 @@
 package com.techelevator.view;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.Map;
 
-public class DisplayItemsTest {
+public class SelectProductTest {
 
     @Test
-    public void Display_Items() {
+    public void read_from_map(){
 
         Map<String, String> tests = GatherItems.gatherItems();
         String testString = tests.get("A4");
@@ -20,13 +21,4 @@ public class DisplayItemsTest {
         Assert.assertTrue(values[3].equals("5"));
     }
 
-    @Test
-    public void Display_Items_Null() {
-
-        Map<String, String> tests = GatherItems.gatherItems();
-        String testString = tests.get("");
-
-        Assert.assertFalse(tests.containsKey(""));
-        Assert.assertTrue(testString == null);
-    }
 }
