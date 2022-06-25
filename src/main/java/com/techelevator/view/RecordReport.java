@@ -19,7 +19,7 @@ public class RecordReport {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss aa");
 
         // Creates a file object to be written into.
-        File logFile = new File("capstone-1\\salesreport.txt");
+        File logFile = new File("salesreport.txt");
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFile, true))) {
 

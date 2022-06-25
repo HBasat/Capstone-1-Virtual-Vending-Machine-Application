@@ -15,7 +15,7 @@ public class GatherSold {
 
     // Reads input file and returns map of vending machine items to be used in the sales report
     public static Map<String,String> gatherSold(){
-        File text = new File("C:\\Users\\hanni\\Desktop\\Capstones\\capstone-1\\vendingmachine.csv");
+        File text = new File("vendingmachine.csv");
 
         // A map is used to store the items entries. Items sold are set to 0 upon starting the program.
         Map<String,String> items = new HashMap<>();

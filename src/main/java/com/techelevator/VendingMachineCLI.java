@@ -119,7 +119,6 @@ public class VendingMachineCLI {
 	- added final strings for PURCHASE menu
 	- added skeleton method for navigating PURCHASE menu
 
-
 	----------- 6.14.22 additions -----------
 	- edited finishTransaction to account for not having enough funds
 	- created AuditFile class to append to a log file
@@ -135,10 +134,10 @@ public class VendingMachineCLI {
 	- added ability to show total price of purchase.
 
 	----------- 6.17.22 additions -----------
-	- added a sales report option. it is secret!
+	- added a sales report option. its secret!
 	- new "record report" class and "display sales report" class.
 	- added lines in SelectProduct and VendingMachineCLI for sales report to function correctly.
-	- updated menu a so that option 4 does not show from the menu.
+	- updated menu so that option 4 does not show from the menu.
 	- added a lot of comments to help parse through the code.
 	- added a bunch of unit tests.
 	 */

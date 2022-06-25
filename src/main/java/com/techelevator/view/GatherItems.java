@@ -15,7 +15,7 @@ import java.util.Scanner;
 
         // STEP 3: reads input file and returns map of vending machine items
         public static Map<String,String> gatherItems(){
-            File text = new File("C:\\Users\\hanni\\Desktop\\Capstones\\capstone-1\\vendingmachine.csv");
+            File text = new File("vendingmachine.csv");
 
             // A map is used to store the items entries. Inventory is set at max amount of 5 upon starting the program.
             Map<String,String> items = new HashMap<>();
